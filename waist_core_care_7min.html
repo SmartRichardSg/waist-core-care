@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#eef6f3">
+<title>Waist & Core Care</title>
+<style>
+:root{--bg:#eef6f3;--card:#fff;--ink:#183b3a;--accent:#2f7d73;--soft:#dcefe9;--warn:#fff1d6}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:520px;margin:auto;padding:22px 16px 35px}
+h1{font-size:30px;margin:4px 0 4px} .sub{margin:0 0 18px;color:#4f6d6a}
+.card{background:var(--card);border-radius:22px;padding:20px;margin:12px 0;box-shadow:0 5px 20px #214b4420}
+.hero{text-align:center}.circle{width:150px;height:150px;border-radius:50%;margin:12px auto;background:var(--soft);display:grid;place-items:center}
+.timer{font-size:48px;font-weight:800}.exercise{font-size:24px;font-weight:800;margin:8px 0}.desc{line-height:1.45}
+button{border:0;border-radius:16px;padding:15px 20px;font-size:18px;font-weight:700;background:var(--accent);color:white;width:100%;margin-top:10px}
+button.secondary{background:#e6efed;color:var(--ink)} button.stop{background:#9b5d58}
+.progress{height:9px;background:#d9e5e2;border-radius:9px;overflow:hidden;margin:14px 0}.bar{height:100%;width:0;background:var(--accent)}
+ul{padding-left:22px;line-height:1.55}.safety{background:var(--warn)}
+.small{font-size:14px;color:#607875}.hidden{display:none}
+</style>
+</head>
+<body>
+<main>
+<section class="card hero">
+<h1>Waist & Core Care</h1>
+<p class="sub">7-minute gentle routine • shoulder-friendly</p>
+<div class="circle"><div class="timer" id="timer">7:00</div></div>
+<div class="exercise" id="name">Ready?</div>
+<p class="desc" id="instructions">Designed to keep the right shoulder relaxed. Move slowly and comfortably.</p>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<button id="start">▶ START</button>
+<button class="secondary hidden" id="pause">⏸ PAUSE</button>
+<button class="stop hidden" id="stop">■ STOP</button>
+</section>
+
+<section class="card">
+<strong>Today's 8 gentle exercises</strong>
+<ul>
+<li>Deep breathing & belly brace — 30 sec</li>
+<li>Seated knee lifts — 45 sec</li>
+<li>Seated gentle side bend — 45 sec</li>
+<li>Seated torso turn — 45 sec</li>
+<li>Pelvic tilts — 45 sec</li>
+<li>Glute bridge — 45 sec</li>
+<li>Seated marching — 45 sec</li>
+<li>Standing supported march & posture — 45 sec</li>
+</ul>
+<p class="small">Short rests are built in. Use a sturdy chair or wall whenever needed.</p>
+</section>
+
+<section class="card safety">
+<strong>⚠️ Shoulder recovery</strong>
+<ul>
+<li>Keep the right shoulder relaxed; no overhead reaching.</li>
+<li>No push-ups, planks, lifting or vigorous arm movements.</li>
+<li>For the standing exercise, hold a stable support with the comfortable hand only if needed.</li>
+<li>Stop if you get shoulder pain, sharp pain, dizziness or unusual discomfort.</li>
+<li>Follow your doctor's or physiotherapist's restrictions if they are more limiting.</li>
+</ul>
+</section>
+<p class="small" style="text-align:center">Small Steps. Better Every Day.</p>
+</main>
+
+<script>
+const exercises=[
+["Deep breathing & belly brace",30,"Sit comfortably. Put hands on your thighs or leave arms relaxed. Breathe in gently, then breathe out and lightly tighten your belly."],
+["Seated knee lifts",45,"Sit tall. Lift one knee a little, lower slowly, then alternate. Keep both shoulders relaxed."],
+["Seated gentle side bend",45,"Sit tall with arms relaxed. Gently lean your trunk a little to one side, return to centre, then the other side. Do not pull with the arms."],
+["Seated torso turn",45,"Sit tall with arms resting across your chest or on your thighs. Turn your upper body gently left and right. Keep the movement small."],
+["Pelvic tilts",45,"Lie on your back with knees bent, or do this seated. Gently tighten your belly and tilt your pelvis to flatten the lower back slightly. Release slowly."],
+["Glute bridge",45,"Lie on your back with knees bent and feet flat. Keep arms resting comfortably. Lift your hips gently, hold briefly, then lower slowly."],
+["Seated marching",45,"Sit tall and alternate lifting your feet. Keep your hands relaxed and shoulders still. Use a slower pace if needed."],
+["Standing supported march & posture",45,"Stand beside a sturdy chair or wall. Use support if needed. March slowly and keep your right shoulder relaxed. Finish standing tall."]
+];
+const rest=15;
+let i=-1,remaining=0,total=0,running=false,paused=false,interval=null;
+const timer=document.getElementById("timer"),name=document.getElementById("name"),ins=document.getElementById("instructions"),bar=document.getElementById("bar");
+const start=document.getElementById("start"),pause=document.getElementById("pause"),stop=document.getElementById("stop");
+function fmt(s){return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
+function render(){timer.textContent=fmt(remaining); bar.style.width=((total-remaining)/total*100)+"%"}
+function beginExercise(){i++;if(i>=exercises.length){finish();return} [name.textContent,remaining,ins.textContent]=[exercises[i][0],exercises[i][1],exercises[i][2]]; total=remaining; render()}
+function beginRest(){name.textContent="Rest & breathe";remaining=rest;total=rest;ins.textContent="Relax. Breathe normally. Get ready for the next gentle movement.";render()}
+function tick(){if(paused)return;remaining--;render();if(remaining<=0){if(i<0)beginExercise();else if(name.textContent==="Rest & breathe")beginExercise();else if(i<exercises.length-1)beginRest();else finish()}}
+function startWorkout(){if(running)return;running=true;paused=false;i=-1;start.classList.add("hidden");pause.classList.remove("hidden");stop.classList.remove("hidden");beginExercise();interval=setInterval(tick,1000)}
+function finish(){clearInterval(interval);running=false;name.textContent="Well done!";timer.textContent="✓";ins.textContent="7 minutes completed. Take a few relaxed breaths and enjoy the feeling of getting it done.";bar.style.width="100%";pause.classList.add("hidden");stop.classList.add("hidden");start.classList.remove("hidden");start.textContent="▶ DO IT AGAIN"}
+start.onclick=startWorkout;
+pause.onclick=()=>{paused=!paused;pause.textContent=paused?"▶ RESUME":"⏸ PAUSE"};
+stop.onclick=()=>{clearInterval(interval);running=false;paused=false;i=-1;remaining=0;total=420;timer.textContent="7:00";name.textContent="Ready?";ins.textContent="Designed to keep the right shoulder relaxed. Move slowly and comfortably.";bar.style.width="0%";pause.classList.add("hidden");stop.classList.add("hidden");start.classList.remove("hidden");start.textContent="▶ START"};
+</script>
+</body>
+</html>
