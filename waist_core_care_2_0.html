@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#eef6f3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Waist & Core Care 2.0</title>
+<style>
+:root{--bg:#eef6f3;--card:#fff;--ink:#183b3a;--muted:#5f7774;--accent:#2f7d73;--soft:#dcefe9;--warn:#fff1d6;--danger:#9b5d58}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:560px;margin:auto;padding:18px 14px 38px}
+h1{font-size:29px;margin:3px 0}.sub{margin:0 0 12px;color:var(--muted)}
+.card{background:var(--card);border-radius:22px;padding:18px;margin:12px 0;box-shadow:0 5px 20px #214b4420}
+.hero{text-align:center}.timer{font-size:52px;font-weight:850;letter-spacing:-1px}
+.total{font-size:13px;color:var(--muted);margin-top:-7px}.exercise{font-size:24px;font-weight:800;margin:8px 0}.desc{line-height:1.45;margin:8px 0}
+.diagram{height:165px;background:var(--soft);border-radius:18px;display:grid;place-items:center;margin:10px 0}.diagram svg{width:230px;height:150px}
+.progress{height:9px;background:#d9e5e2;border-radius:9px;overflow:hidden;margin:14px 0}.bar{height:100%;width:0;background:var(--accent);transition:width .2s}
+button{border:0;border-radius:15px;padding:14px 16px;font-size:17px;font-weight:750;background:var(--accent);color:white;width:100%;margin-top:9px}
+button.secondary{background:#e6efed;color:var(--ink)}button.danger{background:var(--danger)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:9px}.row button{margin-top:9px}
+.pill{display:inline-block;background:var(--soft);padding:6px 10px;border-radius:999px;font-size:13px;font-weight:700}
+.sectionTitle{font-size:19px;font-weight:800;margin-bottom:10px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:var(--soft);border-radius:15px;padding:12px;text-align:center}.stat b{display:block;font-size:22px}.stat span{font-size:12px;color:var(--muted)}
+.history{max-height:240px;overflow:auto}.historyRow{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e4ecea;font-size:14px}
+.small{font-size:13px;color:var(--muted);line-height:1.45}.safety{background:var(--warn)}ul{padding-left:22px;line-height:1.5}
+.switch{display:flex;align-items:center;justify-content:space-between;padding:8px 0}.switch input{width:22px;height:22px}
+.hidden{display:none}.done{font-size:44px}.footer{text-align:center;margin-top:16px}
+</style>
+</head>
+<body>
+<main>
+<section class="card hero">
+<h1>Waist & Core Care <span class="pill">2.0</span></h1>
+<p class="sub">7-minute guided routine • shoulder-friendly</p>
+<div class="diagram" id="diagram"></div>
+<div class="timer" id="timer">7:00</div>
+<div class="total" id="total">Session time remaining</div>
+<div class="exercise" id="name">Ready?</div>
+<p class="desc" id="instructions">Press START and follow the picture, timer and voice. No need to count repetitions.</p>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="row">
+<button id="start">▶ START</button>
+<button class="secondary hidden" id="pause">⏸ PAUSE</button>
+</div>
+<button class="danger hidden" id="stop">■ STOP</button>
+</section>
+
+<section class="card">
+<div class="sectionTitle">🔊 Audio guide</div>
+<div class="switch"><span>Voice instructions</span><input id="audio" type="checkbox" checked></div>
+<p class="small">Uses your iPhone's built-in voice. The first voice message starts after you press START.</p>
+</section>
+
+<section class="card">
+<div class="sectionTitle">📊 My progress</div>
+<div class="stats">
+<div class="stat"><b id="sessions">0</b><span>Sessions</span></div>
+<div class="stat"><b id="minutes">0</b><span>Minutes</span></div>
+<div class="stat"><b id="streak">0</b><span>Day streak</span></div>
+</div>
+<button class="secondary" id="showHistory">📅 Exercise history</button>
+<div id="historyPanel" class="hidden">
+<div class="history" id="history"></div>
+<div class="row">
+<button class="secondary" id="export">⬇ Backup</button>
+<button class="secondary" id="clearHistory">Clear history</button>
+</div>
+<input id="restore" type="file" accept="application/json" class="hidden">
+<button class="secondary" id="restoreBtn">⬆ Restore backup</button>
+</div>
+</section>
+
+<section class="card">
+<div class="sectionTitle">Today's 8 gentle exercises</div>
+<ul>
+<li>Deep breathing & belly brace — 30 sec</li>
+<li>Seated knee lifts — 45 sec</li>
+<li>Seated gentle side bend — 45 sec</li>
+<li>Seated torso turn — 45 sec</li>
+<li>Pelvic tilts — 45 sec</li>
+<li>Glute bridge — 45 sec</li>
+<li>Seated marching — 45 sec</li>
+<li>Standing supported march & posture — 45 sec</li>
+</ul>
+<p class="small">Five short 15-second rests are built into the 7-minute session.</p>
+</section>
+
+<section class="card safety">
+<div class="sectionTitle">⚠️ Shoulder recovery</div>
+<ul>
+<li>Keep the right shoulder relaxed; no overhead reaching.</li>
+<li>No push-ups, planks, lifting or vigorous arm movements.</li>
+<li>For standing, use stable support with the comfortable hand only if needed.</li>
+<li>Stop for shoulder pain, sharp pain, dizziness or unusual discomfort.</li>
+<li>Follow your doctor or physiotherapist's restrictions if they are more limiting.</li>
+</ul>
+</section>
+
+<p class="small footer">Small Steps. Better Every Day.</p>
+</main>
+
+<script>
+const TOTAL=420, REST=15;
+const exercises=[
+["Deep breathing & belly brace",30,"Sit comfortably. Keep arms relaxed. Breathe in gently, then breathe out and lightly tighten your belly.","breathe"],
+["Seated knee lifts",45,"Sit tall. Lift one knee a little, lower slowly, then alternate. Keep both shoulders relaxed.","knees"],
+["Seated gentle side bend",45,"Sit tall with arms relaxed. Lean your trunk a little to one side, return to centre, then the other side. Do not pull with the arms.","side"],
+["Seated torso turn",45,"Sit tall with arms resting on your thighs or across your chest. Turn your upper body gently left and right. Keep it small.","turn"],
+["Pelvic tilts",45,"Lie on your back with knees bent, or do this seated. Gently tighten your belly and tilt your pelvis. Release slowly.","pelvis"],
+["Glute bridge",45,"Lie on your back with knees bent and feet flat. Keep arms resting comfortably. Lift your hips gently, then lower slowly.","bridge"],
+["Seated marching",45,"Sit tall and alternate lifting your feet. Keep your hands relaxed and shoulders still.","march"],
+["Standing supported march & posture",45,"Stand beside a sturdy chair or wall. Use support if needed. March slowly and keep your right shoulder relaxed.","stand"]
+];
+// 30 + 7*45 + 5*15 = exactly 420 seconds.
+const restAfter=new Set([0,1,2,3,4]);
+let phase="ready",idx=-1,remaining=TOTAL,phaseTotal=TOTAL,elapsed=0,paused=false,interval=null;
+const $=id=>document.getElementById(id);
+const timer=$("timer"),name=$("name"),instructions=$("instructions"),bar=$("bar"),diagram=$("diagram"),start=$("start"),pause=$("pause"),stop=$("stop");
+
+function fmt(s){return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
+function speak(text){if(!$("audio").checked||!("speechSynthesis"in window))return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text);u.rate=.9;u.pitch=1; speechSynthesis.speak(u)}
+function svg(type){
+const common=`stroke="#183b3a" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"`;
+const head=`<circle cx="115" cy="30" r="15" fill="#fff" stroke="#183b3a" stroke-width="5"/>`;
+let body="";
+if(type==="breathe")body=`${head}<path ${common} d="M115 45v58M115 58L82 78M115 58l33 20M115 103L90 135M115 103l25 32"/><path ${common} d="M70 105h-18M160 105h18"/>`;
+if(type==="knees")body=`${head}<path ${common} d="M115 45v48M115 58L78 75M115 58l35 18M115 93l-25 28 10 24M115 93l30 28-5 24"/><path ${common} d="M62 150h108"/>`;
+if(type==="side")body=`${head}<path ${common} d="M115 45v88M115 60L75 78M115 60l36 18M115 132l-24 20M115 132l24 20"/><path ${common} d="M68 72Q45 95 67 118M162 72Q185 95 163 118"/>`;
+if(type==="turn")body=`${head}<path ${common} d="M115 45v88M115 62L75 80M115 62l40 18M115 133l-24 20M115 133l24 20"/><path ${common} d="M65 52Q45 75 65 98M165 52Q185 75 165 98"/>`;
+if(type==="pelvis")body=`<circle cx="70" cy="65" r="15" fill="#fff" stroke="#183b3a" stroke-width="5"/><path ${common} d="M84 72l48 32M132 104l35-3M132 104l15 31M70 80l-8 42M62 122l-18 27M62 122l22 27"/><path ${common} d="M35 149h140"/>`;
+if(type==="bridge")body=`<circle cx="55" cy="105" r="15" fill="#fff" stroke="#183b3a" stroke-width="5"/><path ${common} d="M69 110Q105 55 140 95M140 95l28-1M140 95l14 30M70 112l-18 35M52 147h120"/>`;
+if(type==="march")body=`${head}<path ${common} d="M115 45v85M115 62L78 78M115 62l37 16M115 130l-28 20M115 130l28 20M87 150l-10 0M143 150l10 0"/><path ${common} d="M78 78l-18 12M152 78l18-12"/>`;
+if(type==="stand")body=`${head}<path ${common} d="M115 45v86M115 62L78 80M115 62l35 18M115 131l-27 20M115 131l27 20"/><path ${common} d="M55 45v105M55 45h20M55 80h20M55 115h20"/>`;
+return `<svg viewBox="0 0 230 165" aria-label="Exercise illustration">${body}</svg>`;
+}
+function render(){
+timer.textContent=fmt(remaining);
+name.textContent=phase==="rest"?"REST & BREATHE":phase==="done"?"Well done!":phase==="ready"?"Ready?":exercises[idx][0];
+instructions.textContent=phase==="rest"?"Relax your shoulders and breathe normally. Get ready for the next movement.":phase==="done"?"7 minutes completed. Your session has been recorded.":phase==="ready"?"Press START and follow the picture, timer and voice. No need to count repetitions.":exercises[idx][2];
+diagram.innerHTML=phase==="rest"?`<div style="font-size:58px">🌿</div>`:phase==="done"?`<div class="done">✓</div>`:phase==="ready"?`<div style="font-size:58px">🧘</div>`:svg(exercises[idx][3]);
+bar.style.width=Math.min(100,elapsed/TOTAL*100)+"%";
+}
+function beginExercise(){
+idx++;
+if(idx>=exercises.length){finish();return}
+phase="exercise";remaining=exercises[idx][1];phaseTotal=remaining;
+speak("Next: "+exercises[idx][0]+". "+exercises[idx][2]);
+render();
+}
+function beginRest(){
+phase="rest";remaining=REST;phaseTotal=REST;
+speak("Rest for fifteen seconds. Breathe normally.");
+render();
+}
+function tick(){
+if(paused)return;
+remaining--;elapsed++;render();
+if(remaining<=0){
+ if(phase==="rest"){beginExercise();}
+ else if(idx<exercises.length-1 && restAfter.has(idx)){beginRest();}
+ else if(idx<exercises.length-1){beginExercise();}
+ else{finish();}
+}else{
+ if(remaining===10 && phase==="exercise")speak("Ten seconds remaining.");
+ if(remaining===3 && phase==="exercise")speak("Three.");
+ if(remaining===2 && phase==="exercise")speak("Two.");
+ if(remaining===1 && phase==="exercise")speak("One.");
+}
+}
+function startWorkout(){
+if(phase==="ready"||phase==="done"){idx=-1;elapsed=0;remaining=TOTAL;phase="exercise";paused=false;start.classList.add("hidden");pause.classList.remove("hidden");stop.classList.remove("hidden");beginExercise();interval=setInterval(tick,1000)}
+}
+function finish(){
+clearInterval(interval);phase="done";remaining=0;elapsed=TOTAL;paused=false;
+saveSession();speak("Well done. Seven minutes completed.");pause.classList.add("hidden");stop.classList.add("hidden");start.classList.remove("hidden");start.textContent="▶ DO IT AGAIN";render();updateStats();
+}
+function stopWorkout(){
+clearInterval(interval);speechSynthesis.cancel();phase="ready";idx=-1;remaining=TOTAL;elapsed=0;paused=false;
+pause.classList.add("hidden");stop.classList.add("hidden");start.classList.remove("hidden");start.textContent="▶ START";render();
+}
+start.onclick=startWorkout;
+pause.onclick=()=>{if(!interval)return;paused=!paused;pause.textContent=paused?"▶ RESUME":"⏸ PAUSE";if(paused){speak("Paused.");}else{speak("Resuming.");}};
+stop.onclick=stopWorkout;
+
+const KEY="waistCoreCareSessionsV2";
+function sessions(){try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){return[]}}
+function saveSession(){const a=sessions();a.unshift({at:new Date().toISOString(),seconds:TOTAL});localStorage.setItem(KEY,JSON.stringify(a));}
+function dayKey(d){return d.toLocaleDateString("en-CA")}
+function calcStreak(a){
+const days=[...new Set(a.map(x=>dayKey(new Date(x.at))))].sort().reverse();
+if(!days.length)return 0;
+let streak=0, cursor=new Date();cursor.setHours(0,0,0,0);
+const today=dayKey(cursor);
+if(days[0]!==today){cursor.setDate(cursor.getDate()-1);if(days[0]!==dayKey(cursor))return 0;}
+for(const d of days){if(d===dayKey(cursor)){streak++;cursor.setDate(cursor.getDate()-1)}else break}
+return streak;
+}
+function updateStats(){
+const a=sessions();$("sessions").textContent=a.length;$("minutes").textContent=Math.round(a.reduce((s,x)=>s+x.seconds,0)/60);$("streak").textContent=calcStreak(a);
+}
+function showHistory(){
+$("historyPanel").classList.toggle("hidden");if($("historyPanel").classList.contains("hidden"))return;
+const a=sessions();$("history").innerHTML=a.length?a.map(x=>{const d=new Date(x.at);return `<div class="historyRow"><span>${d.toLocaleDateString()}<br><span class="small">${d.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})}</span></span><b>7:00</b></div>`}).join(""):"<p class='small'>No completed sessions yet.</p>";
+}
+$("showHistory").onclick=showHistory;
+$("export").onclick=()=>{const blob=new Blob([JSON.stringify({app:"Waist & Core Care",version:"2.0",sessions:sessions()},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="waist-core-care-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+$("restoreBtn").onclick=()=>$("restore").click();
+$("restore").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!Array.isArray(x.sessions))throw 0;localStorage.setItem(KEY,JSON.stringify(x.sessions));updateStats();showHistory();alert("Backup restored.");}catch(err){alert("That backup file could not be restored.");}};r.readAsText(f)};
+$("clearHistory").onclick=()=>{if(confirm("Clear all exercise history on this iPhone?")){localStorage.removeItem(KEY);updateStats();showHistory()}};
+updateStats();render();
+</script>
+</body>
+</html>
